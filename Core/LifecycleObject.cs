@@ -13,16 +13,17 @@ public record LifecycleObjectDefinition {
 }
 
 public sealed class LifecycleObjectBuilder {
-    private IDictionary<string, LifecycleComponent> _registry;
+    private IDictionary<string, Func<LifecycleComponent>> _registry;
     private ILogger _logger;
-    public LifecycleObjectBuilder(ILogger logger, IDictionary<string, LifecycleComponent> componentRegistry) {
+    public LifecycleObjectBuilder(ILogger logger, IDictionary<string, Func<LifecycleComponent>> componentRegistry) {
         _registry = componentRegistry;
         _logger = logger;
     }
 
     public LifecycleObject Build(LifecycleObjectDefinition obj) {
         var instance = new LifecycleObject(_logger);
-        instance.AddComponents(obj.Components.Select(x => _registry[x]));
+        var componentBundle = obj.Components.ToDictionary(x => x, x => _registry[x]());
+        instance.AddComponents(componentBundle);
         return instance;
     }
 }
@@ -37,7 +38,7 @@ public sealed class LifecycleObject
     
     private readonly ILogger _logger;
 
-    private IDictionary<Guid, LifecycleComponent> _components;
+    private IDictionary<string, LifecycleComponent> _components;
 
     public LifecycleObject(ILogger logger) {
         _logger = logger;
@@ -51,17 +52,21 @@ public sealed class LifecycleObject
             _logger.Info("Started");
         };
         _id = new Guid();
-        _components = new Dictionary<Guid, LifecycleComponent>();
+        _components = new Dictionary<string, LifecycleComponent>();
         _state = LifecycleState.UNINITIALIZED;
     }
 
-    internal void AddComponents(IEnumerable<LifecycleComponent> components) {
-        foreach(var component in components) {
-            _components[component.Id] = component;
+    internal void AddComponents(IDictionary<string, LifecycleComponent> components) {
+        foreach(var componentKVP in components) {
+            var component = componentKVP.Value;
+            _components[componentKVP.Key] = component;
             Init += component.Init;
             Start += component.Start;
             Tick += component.Tick;
         }
+    }
+    public T GetComponent<T>(string componentName) where T: LifecycleComponent {
+        return (T)_components[componentName];
     }
     
     public delegate void OnInitDelegate();

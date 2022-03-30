@@ -11,11 +11,11 @@ public class Tests
     {
         var logger = new Logger();
         manager = new LifecycleManager(logger);
-        builder = new LifecycleObjectBuilder(logger, new Dictionary<string, LifecycleComponent>());
+        builder = new LifecycleObjectBuilder(logger, new Dictionary<string, Func<LifecycleComponent>>());
     }
 
     [Test]
-    public void Test1()
+    public void TestBasicLifecycleManagment()
     {
         var objDef = new LifecycleObjectDefinition {
             Name = "TestObject"

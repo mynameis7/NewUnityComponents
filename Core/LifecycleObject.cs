@@ -7,6 +7,26 @@ public enum LifecycleState {
     ENDED
 }
 
+public record ObjectDefinition {
+    public string Name;
+    public string[] Components;
+}
+
+public sealed class LifecycleObjectBuilder {
+    private IDictionary<string, LifecycleComponent> _registry;
+    private ILogger _logger;
+    public LifecycleObjectBuilder(ILogger logger, IDictionary<string, LifecycleComponent> componentRegistry) {
+        _registry = componentRegistry;
+        _logger = logger;
+    }
+
+    public LifecycleObject Build(ObjectDefinition obj) {
+        var instance = new LifecycleObject(_logger);
+        instance.AddComponents(obj.Components.Select(x => _registry[x]));
+        return instance;
+    }
+}
+
 public sealed class LifecycleObject
 {
     private readonly Guid _id;
@@ -35,11 +55,13 @@ public sealed class LifecycleObject
         _state = LifecycleState.UNINITIALIZED;
     }
 
-    public void AddComponent(LifecycleComponent component) {
-        _components[component.Id] = component;
-        Init += component.Init;
-        Start += component.Start;
-        Tick += component.Tick;
+    internal void AddComponents(IEnumerable<LifecycleComponent> components) {
+        foreach(var component in components) {
+            _components[component.Id] = component;
+            Init += component.Init;
+            Start += component.Start;
+            Tick += component.Tick;
+        }
     }
     
     public delegate void OnInitDelegate();

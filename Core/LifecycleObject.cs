@@ -7,9 +7,9 @@ public enum LifecycleState {
     ENDED
 }
 
-public record ObjectDefinition {
-    public string Name;
-    public string[] Components;
+public record LifecycleObjectDefinition {
+    public string Name = "";
+    public string[] Components = {};
 }
 
 public sealed class LifecycleObjectBuilder {
@@ -20,7 +20,7 @@ public sealed class LifecycleObjectBuilder {
         _logger = logger;
     }
 
-    public LifecycleObject Build(ObjectDefinition obj) {
+    public LifecycleObject Build(LifecycleObjectDefinition obj) {
         var instance = new LifecycleObject(_logger);
         instance.AddComponents(obj.Components.Select(x => _registry[x]));
         return instance;

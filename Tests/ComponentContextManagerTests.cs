@@ -33,4 +33,12 @@ public class ComponentContextManagerTests {
         Assert.That(component.GetState(), Is.EqualTo(LifecycleState.INITIALIZED));
     }
 
+    [Test]
+    public void TestComponentBuildingSharedState() {
+        var manager = new ComponentContextManager();
+        var component = manager.BuildComponent<TestComponent>();
+        var component2 = manager.BuildComponent<TestComponent>();
+        component.Init();
+        Assert.That(component2.GetState(), Is.EqualTo(LifecycleState.INITIALIZED));
+    }
 }

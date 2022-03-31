@@ -19,8 +19,8 @@ public class LifecycleObjectBuilderTests {
     public void Setup()
     {
         var logger = new Logger();
-        var registry = new Dictionary<string, Func<LifecycleComponent>>{
-            [nameof(TestComponent)] = () => new TestComponent()
+        var registry = new Dictionary<string, Type>{
+            [nameof(TestComponent)] = typeof(TestComponent)
         };
         builder = new LifecycleObjectBuilder(logger, registry);
     }
@@ -36,5 +36,4 @@ public class LifecycleObjectBuilderTests {
         var component = obj.GetComponent<TestComponent>("TestComponent");
         Assert.That(component.TestState, Is.EqualTo(LifecycleState.INITIALIZED));
     }
-
 }

@@ -9,17 +9,22 @@ public sealed class ComponentContextManager {
     }
     public LifecycleComponent BuildComponent(Type type) {
         var componentContextTypes = type.GetConstructors()
-            .First(x => x.GetParameters().Length > 0)
+            .FirstOrDefault(x => x.GetParameters().Length > 0)?
             .GetParameters()
             .Select(x => x.ParameterType);
+
+        // parameterless constructor 
+        if(componentContextTypes == null) {
+            return (LifecycleComponent) Activator.CreateInstance(type)!;
+        }
         foreach(var contextType in componentContextTypes) {
             if(!_contextCache.ContainsKey(contextType)) {
-                _contextCache[contextType] = Activator.CreateInstance(contextType);
+                _contextCache[contextType] = Activator.CreateInstance(contextType)!;
             }
         }
 
         var componentContexts = componentContextTypes.Select(x => _contextCache[x]).ToArray();
-        return (LifecycleComponent) Activator.CreateInstance(type, componentContexts);
+        return (LifecycleComponent) Activator.CreateInstance(type, componentContexts)!;
     }
     
 }

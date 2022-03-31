@@ -15,6 +15,10 @@ public record LifecycleObjectDefinition {
 public sealed class LifecycleObjectBuilder {
     private IDictionary<string, Func<LifecycleComponent>> _registry;
     private ILogger _logger;
+    
+    // TODO: Make this component registry thing a reflective builder thing so that I can do specflow like context injection
+    // I want components to share state via context injection scoped to the lifecycle object they're attached to 
+    
     public LifecycleObjectBuilder(ILogger logger, IDictionary<string, Func<LifecycleComponent>> componentRegistry) {
         _registry = componentRegistry;
         _logger = logger;

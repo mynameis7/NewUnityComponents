@@ -46,6 +46,9 @@ public sealed class LifecycleObject
 
     public LifecycleObject(ILogger logger) {
         _logger = logger;
+        _id = new Guid();
+        _components = new Dictionary<string, LifecycleComponent>();
+        _state = LifecycleState.UNINITIALIZED;
         Init = () => {
             _state = LifecycleState.INITIALIZED;
             _logger.Info("Initialized");
@@ -55,9 +58,6 @@ public sealed class LifecycleObject
             _state = LifecycleState.STARTED;
             _logger.Info("Started");
         };
-        _id = new Guid();
-        _components = new Dictionary<string, LifecycleComponent>();
-        _state = LifecycleState.UNINITIALIZED;
     }
 
     internal void AddComponents(IDictionary<string, LifecycleComponent> components) {

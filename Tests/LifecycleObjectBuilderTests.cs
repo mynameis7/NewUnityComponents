@@ -19,21 +19,20 @@ public class LifecycleObjectBuilderTests {
     public void Setup()
     {
         var logger = new Logger();
-        var registry = new Dictionary<string, Type>{
-            [nameof(TestComponent)] = typeof(TestComponent)
-        };
-        builder = new LifecycleObjectBuilder(logger, registry);
+        builder = new LifecycleObjectBuilder(logger);
     }
 
     [Test]
     public void TestObjectBuilder() {
+        // the + instead of the . means it's a private class
+        var fullName = $"{nameof(Tests)}.{nameof(LifecycleObjectBuilderTests)}+{nameof(TestComponent)}";
         var objDef = new LifecycleObjectDefinition {
             Name = "TestObject",
-            Components = new string[]{"TestComponent"}
+            Components = new string[]{fullName}
         };
         var obj = builder.Build(objDef);
         obj.Init();
-        var component = obj.GetComponent<TestComponent>("TestComponent");
+        var component = obj.GetComponent<TestComponent>(fullName);
         Assert.That(component.TestState, Is.EqualTo(LifecycleState.INITIALIZED));
     }
 }

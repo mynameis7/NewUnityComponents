@@ -5,9 +5,17 @@ public sealed class LifecycleObjectBuilder {
     private IDictionary<string, Type> _registry;
     private ILogger _logger;
         
-    public LifecycleObjectBuilder(ILogger logger, IDictionary<string, Type> componentRegistry) {
-        _registry = componentRegistry;
+    public LifecycleObjectBuilder(ILogger logger) {
         _logger = logger;
+        _registry = BuildRegistry();
+        foreach(var entry in _registry) {
+            Console.WriteLine(entry.Key);
+        }
+    }
+
+    private IDictionary<string, Type> BuildRegistry() {
+        // here's hoping fullname is never null for my usages of this
+        return typeof(LifecycleComponent).GetSubclasses().ToDictionary(x => x.FullName!, x => x);
     }
 
     public LifecycleObject Build(LifecycleObjectDefinition obj) {

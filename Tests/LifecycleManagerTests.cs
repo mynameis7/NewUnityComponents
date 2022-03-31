@@ -11,7 +11,7 @@ public class Tests
     {
         var logger = new Logger();
         manager = new LifecycleManager(logger);
-        builder = new LifecycleObjectBuilder(logger, new Dictionary<string, Type>());
+        builder = new LifecycleObjectBuilder(logger);
     }
 
     [Test]

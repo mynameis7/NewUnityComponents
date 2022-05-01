@@ -1,4 +1,4 @@
-namespace Core;
+﻿namespace Core;
 
 public enum LifecycleState {
     UNINITIALIZED,
@@ -10,6 +10,7 @@ public enum LifecycleState {
 public record LifecycleObjectDefinition {
     public string Name = "";
     public string[] Components = {};
+    public string[] Tags = {};
 }
 
 public sealed class LifecycleObject
@@ -23,6 +24,8 @@ public sealed class LifecycleObject
     private readonly ILogger _logger;
 
     private IDictionary<string, LifecycleComponent> _components;
+
+    public string[] Tags {get; set;}
 
     public LifecycleObject(ILogger logger) {
         _logger = logger;

@@ -5,9 +5,9 @@ public sealed class LifecycleObjectBuilder {
     private IDictionary<string, Type> _registry;
     private ILogger _logger;
         
-    public LifecycleObjectBuilder(ILogger logger) {
+    public LifecycleObjectBuilder(ILogger logger, IDictionary<string, Type>? registry = null) {
         _logger = logger;
-        _registry = BuildRegistry();
+        _registry = registry ?? BuildRegistry();
         foreach(var entry in _registry) {
             Console.WriteLine(entry.Key);
         }
@@ -20,6 +20,7 @@ public sealed class LifecycleObjectBuilder {
 
     public LifecycleObject Build(LifecycleObjectDefinition obj) {
         var instance = new LifecycleObject(_logger);
+        instance.Tags = obj.Tags;
         var contextManager = new ComponentContextManager();
         var componentBundle = obj.Components.ToDictionary(x => x, x => contextManager.BuildComponent(_registry[x]));
         instance.AddComponents(componentBundle);

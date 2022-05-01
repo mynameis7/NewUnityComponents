@@ -43,4 +43,10 @@ public class LifecycleManager {
                 break;
         }
     }
+
+    public void Submit<T>(T _event) where T: EventBase {
+        foreach(var obj in _objects.Where(x => true)) {
+            
+        }
+    }
 }

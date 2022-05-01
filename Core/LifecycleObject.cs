@@ -55,6 +55,12 @@ public sealed class LifecycleObject
     public T GetComponent<T>(string componentName) where T: LifecycleComponent {
         return (T)_components[componentName];
     }
+
+    public void Submit<T>(T _event) where T: EventBase {
+        foreach(var component in _components.Values) {
+            component.Submit(_event);
+        }
+    }
     
     public delegate void OnInitDelegate();
     public OnInitDelegate Init;

@@ -45,8 +45,13 @@ public class LifecycleManager {
     }
 
     public void Submit<T>(T _event) where T: EventBase {
-        foreach(var obj in _objects.Where(x => true)) {
-            
+        var targetObjects = _event.TargetTags.Any() ? _objects.Values.Where(x => TagIntersection(_event.TargetTags, x.Tags)) : _objects.Values;
+        foreach(var obj in targetObjects) {
+            obj.Submit(_event);
         }
+    }
+
+    private bool TagIntersection(string[] targetTags, string[] comparisonTags) {
+        return targetTags.Intersect(comparisonTags).Any();
     }
 }
